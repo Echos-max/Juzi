@@ -1,0 +1,28 @@
+workflows:
+  ios-development:
+    name: iOS Development Build
+    environment:
+      vars:
+        XCODE_WORKSPACE: "ios/JuZi.xcworkspace"  # 根据实际文件名修改
+        XCODE_SCHEME: "JuZi"                     # 与 Xcode 中 Scheme 名称一致
+      xcode: latest                               # 使用最新 Xcode 版本
+    scripts:
+      - name: Install Dependencies
+        script: |
+          npm install
+          cd ios && pod install --repo-update
+      - name: Build IPA
+        script: |
+          xcodebuild build-for-testing \
+            -workspace "$XCODE_WORKSPACE" \
+            -scheme "$XCODE_SCHEME" \
+            -sdk iphoneos \
+            -configuration Release \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO
+    artifacts:
+      - build/**/*.ipa
+    publishing:
+      email:
+        recipients:
+          - 1876122538@qq.com # 替换为你的邮箱
